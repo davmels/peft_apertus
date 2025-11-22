@@ -27,7 +27,7 @@ export MASTER_PORT=29500
 export NUM_MACHINES=$SLURM_NNODES
 export NUM_PROCESSES=$((SLURM_NNODES * GPUS_PER_NODE))
 
-export CONFIG_FILE="$SCRATCH/LSAIE/project/peft_apertus/configs/ddp.yaml"
+export CONFIG_FILE="$SCRATCH/LSAIE/project/peft_apertus/configs/zero3_multinode.yaml"
 export PYTHON_FILE="$SCRATCH/LSAIE/project/peft_apertus/sft_train.py"
 export SFT_CONFIG="$SCRATCH/LSAIE/project/peft_apertus/configs/sft_lora.yaml"
 
