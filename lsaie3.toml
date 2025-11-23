@@ -4,7 +4,7 @@ mounts = ["/iopsstor", "/users", "/capstor"]
 
 writable = true
 
-workdir = "/iopsstor/scratch/cscs/dmelikidze/LSAIE/project/apertus-finetuning-recipes"
+workdir = "/iopsstor/scratch/cscs/dmelikidze/LSAIE/project/peft_apertus"
 
 [annotations]
 com.hooks.aws_ofi_nccl.enabled = "true"

@@ -1,3 +1,9 @@
 /Apertus-FT
 /logs
 /.deepspeed_env
+*.logs
+models/
+datasets/
+inference_results/
+__pycache__/
+wandb/

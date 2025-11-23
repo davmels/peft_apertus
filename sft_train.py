@@ -18,33 +18,47 @@ accelerate launch \
     sft_train.py \
     --config configs/sft_lora.yaml \
     --model_name_or_path swiss-ai/Apertus-8B-Instruct-2509 \
+    --processing_strategy swiss_judgement_prediction
 """
 
 from datasets import load_dataset
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import os
+import transformers.modeling_utils
 from trl import (
     ModelConfig,
-    ScriptArguments,
     SFTConfig,
     SFTTrainer,
     TrlParser,
     get_peft_config,
 )
+from utils import load_and_process_dataset, CustomScriptArguments
+
+
+def no_op(*args, **kwargs):
+    pass
+
+
+transformers.modeling_utils.PreTrainedModel._initialize_missing_keys = no_op
 
 
 def main(script_args, training_args, model_args):
+    # ====================================================
+    #  WANDB SETUP
+    # ====================================================
+    # Configure logging to the specific Organization and Team
+    os.environ["WANDB_ENTITY"] = "lsaie-peft-apertus"
+    os.environ["WANDB_PROJECT"] = "swiss_judgement_prediction"
+
     # ------------------------
     # Load model & tokenizer
     # ------------------------
-    # Set base directory to store model
-    store_base_dir = "./"  # os.getenv("STORE")
-
     model = AutoModelForCausalLM.from_pretrained(
         model_args.model_name_or_path,
         torch_dtype=model_args.torch_dtype,
         use_cache=False if training_args.gradient_checkpointing else True,
-        attn_implementation=model_args.attn_implementation,  # <-- ensure it’s used
+        attn_implementation="flash_attention_2",
+        low_cpu_mem_usage=True,
     )
 
     tokenizer = AutoTokenizer.from_pretrained(
@@ -53,9 +67,9 @@ def main(script_args, training_args, model_args):
     tokenizer.pad_token = tokenizer.eos_token
 
     # --------------
-    # Load dataset
+    # Load & Process Dataset
     # --------------
-    dataset = load_dataset(script_args.dataset_name, name=script_args.dataset_config)
+    dataset = load_and_process_dataset(script_args)
 
     # -------------
     # Train model
@@ -72,13 +86,16 @@ def main(script_args, training_args, model_args):
     )
 
     trainer.train()
-    trainer.save_model(os.path.join(store_base_dir, training_args.output_dir))
+    print("Saving model to:", training_args.output_dir)
+    trainer.save_model(training_args.output_dir)
+    print("Model saved.")
     if training_args.push_to_hub:
         trainer.push_to_hub(dataset_name=script_args.dataset_name)
 
 
 if __name__ == "__main__":
-    parser = TrlParser((ScriptArguments, SFTConfig, ModelConfig))
+    # Use CustomScriptArguments instead of the default ScriptArguments
+    parser = TrlParser((CustomScriptArguments, SFTConfig, ModelConfig))
     script_args, training_args, model_args, _ = parser.parse_args_and_config(
         return_remaining_strings=True
     )

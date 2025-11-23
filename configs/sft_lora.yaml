@@ -1,11 +1,13 @@
 # Model
-model_name_or_path: swiss-ai/Apertus-8B-Instruct-2509
+model_name_or_path: swiss-ai/Apertus-70B-Instruct-2509
 # attn_implementation: kernels-community/vllm-flash-attn3
 torch_dtype: bfloat16
 
 # Dataset
-dataset_name: HuggingFaceH4/Multilingual-Thinking
-dataset_num_proc: 12
+dataset_name: HuggingFaceH4/Multilingual-Thinking #/iopsstor/scratch/cscs/dmelikidze/LSAIE/project/peft_apertus/datasets/swiss_judgment_prediction_dataset # HuggingFaceH4/Multilingual-Thinking
+dataset_num_proc: 288
+from_disk: false # true
+processing_strategy: default # swiss_judgement_prediction
 
 # Hyperparameters
 learning_rate: 2.0e-4
@@ -32,6 +34,6 @@ lr_scheduler_kwargs:
   min_lr_rate: 0.1
 
 # Output & logging
-output_dir: Apertus-FT/output/apertus_lora
-report_to: "none" 
+output_dir: /iopsstor/scratch/cscs/dmelikidze/LSAIE/project/peft_apertus/models/apertus70B_sft_lora_tests
+report_to: "wandb" 
 seed: 42
