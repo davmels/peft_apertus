@@ -21,6 +21,9 @@ accelerate launch \
     --processing_strategy swiss_judgement_prediction
 """
 
+from dotenv import load_dotenv
+load_dotenv()  # this reads .env from the current working directory
+
 from datasets import load_dataset
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import os
@@ -70,6 +73,12 @@ def main(script_args, training_args, model_args):
     # Load & Process Dataset
     # --------------
     dataset = load_and_process_dataset(script_args)
+
+    if training_args.eval_strategy != "no" and script_args.dataset_test_split not in dataset:
+        print(f"Split '{script_args.dataset_test_split}' not found. Creating 10% validation split from '{script_args.dataset_train_split}'.")
+        split_ds = dataset[script_args.dataset_train_split].train_test_split(test_size=0.10, seed=42)
+        dataset[script_args.dataset_train_split] = split_ds["train"]
+        dataset[script_args.dataset_test_split] = split_ds["test"]
 
     # -------------
     # Train model

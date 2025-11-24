@@ -34,6 +34,11 @@ lr_scheduler_kwargs:
   min_lr_rate: 0.1
 
 # Output & logging
-output_dir: /iopsstor/scratch/cscs/dmelikidze/LSAIE/project/peft_apertus/models/apertus70B_sft_lora_tests
-report_to: "wandb" 
+output_dir: /iopsstor/scratch/cscs/aashirmatov/LSAIE/project/peft_apertus/models/apertus70B_sft_lora_tests
+report_to: "wandb"
+
+eval_strategy: "steps"      # or "epoch"
+eval_steps: 10
+per_device_eval_batch_size: 4
+
 seed: 42
