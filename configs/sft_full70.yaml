@@ -1,20 +1,20 @@
 # Model
-model_name_or_path: swiss-ai/Apertus-8B-Instruct-2509
+model_name_or_path: swiss-ai/Apertus-70B-Instruct-2509
 # attn_implementation: kernels-community/vllm-flash-attn3
 dtype: bfloat16
 
 # Dataset
 dataset_name: /iopsstor/scratch/cscs/dmelikidze/LSAIE/project/peft_apertus/datasets/swiss_judgment_prediction_dataset #HuggingFaceH4/Multilingual-Thinking #/iopsstor/scratch/cscs/dmelikidze/LSAIE/project/peft_apertus/datasets/swiss_judgment_prediction_dataset
-dataset_num_proc: 288
+dataset_num_proc: 32
 from_disk: true #false #true
-processing_strategy: swiss_judgement_prediction # default #swiss_judgement_prediction
+processing_strategy: swiss_judgement_prediction #default #swiss_judgement_prediction
 
 # Hyperparameters
 learning_rate: 2.0e-5
 gradient_checkpointing: true
 num_train_epochs: 1.0
 logging_steps: 1
-per_device_train_batch_size: 8
+per_device_train_batch_size: 4
 gradient_accumulation_steps: 4
 bf16: true 
 bf16_full_eval: true
@@ -25,6 +25,6 @@ lr_scheduler_type: cosine_with_min_lr
 lr_scheduler_kwargs:
   min_lr_rate: 0.1
 
-output_dir: /iopsstor/scratch/cscs/dmelikidze/LSAIE/project/peft_apertus/models/apertus8B_sft_tests8
+output_dir: /iopsstor/scratch/cscs/dmelikidze/LSAIE/project/peft_apertus/models/apertus70B_sft_tests
 report_to: "wandb"
 seed: 42

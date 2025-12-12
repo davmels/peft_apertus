@@ -69,7 +69,10 @@ def main(script_args, training_args, model_args):
     # --------------
     # Load & Process Dataset
     # --------------
-    dataset = load_and_process_dataset(script_args)
+    with training_args.main_process_first(
+        desc="dataset map pre-processing", local=False
+    ):
+        dataset = load_and_process_dataset(script_args)
 
     # -------------
     # Train model

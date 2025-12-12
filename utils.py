@@ -103,7 +103,8 @@ def load_and_process_dataset(script_args):
         dataset = load_from_disk(script_args.dataset_name)
     else:
         dataset = load_dataset(
-            script_args.dataset_name, name=script_args.dataset_config
+            script_args.dataset_name,
+            name=script_args.dataset_config,  # download_mode="force_redownload"
         )
 
     strategy_name = script_args.processing_strategy
@@ -131,25 +132,25 @@ def load_and_process_dataset(script_args):
     if strategy_name == "swiss_judgement_prediction":
         # 1. Map to new format (creates "messages" column, removes "year", "text", etc.)
         dataset = dataset.map(
-            process_fn, 
-            num_proc=os.cpu_count(), 
-            remove_columns=remove_cols
+            process_fn,
+            num_proc=os.cpu_count(),
+            remove_columns=remove_cols,
+            # load_from_cache_file=False,
         )
-        
+
         # 2. Remove unused SPLITS (e.g., 'test', 'validation')
         # Check if it is a dictionary (DatasetDict)
         if hasattr(dataset, "keys"):
             # Identify keys to delete
             splits_to_delete = [
-                k for k in dataset.keys() 
-                if k != script_args.dataset_train_split
+                k for k in dataset.keys() if k != script_args.dataset_train_split
             ]
-            
+
             if splits_to_delete:
                 print(f"Removing unused splits: {splits_to_delete}")
                 for split in splits_to_delete:
                     del dataset[split]
-            
+
             # Safety check
             if script_args.dataset_train_split not in dataset:
                 raise ValueError(
@@ -159,6 +160,10 @@ def load_and_process_dataset(script_args):
 
     else:
         # Default strategy
-        dataset = dataset.map(process_fn, num_proc=os.cpu_count())
+        dataset = dataset.map(
+            process_fn,
+            num_proc=os.cpu_count(),
+            # load_from_cache_file=False
+        )
 
     return dataset
