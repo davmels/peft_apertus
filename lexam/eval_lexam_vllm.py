@@ -46,7 +46,7 @@ def maybe_init_torch_distributed():
 
 def main():
     os.environ["WANDB_ENTITY"] = "lsaie-peft-apertus"
-    os.environ["WANDB_PROJECT"] = "swiss_judgement_prediction"
+    os.environ["WANDB_PROJECT"] = "swiss_judgment_prediction"
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str, required=True, help="Path to YAML config")

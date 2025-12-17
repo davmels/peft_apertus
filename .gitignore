@@ -7,3 +7,5 @@ datasets/
 inference_results/
 __pycache__/
 wandb/
+/.venv/
+logs/

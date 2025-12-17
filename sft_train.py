@@ -48,14 +48,14 @@ def main(script_args, training_args, model_args):
     # ====================================================
     # Configure logging to the specific Organization and Team
     os.environ["WANDB_ENTITY"] = "lsaie-peft-apertus"
-    os.environ["WANDB_PROJECT"] = "swiss_judgement_prediction"
+    os.environ["WANDB_PROJECT"] = "swiss_judgment_prediction"
 
     # ------------------------
     # Load model & tokenizer
     # ------------------------
     model = AutoModelForCausalLM.from_pretrained(
         model_args.model_name_or_path,
-        torch_dtype=model_args.torch_dtype,
+        dtype=model_args.dtype,
         use_cache=False if training_args.gradient_checkpointing else True,
         attn_implementation="flash_attention_2",
         low_cpu_mem_usage=True,
