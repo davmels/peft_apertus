@@ -3,9 +3,9 @@ model_id: swiss-ai/Apertus-70B-Instruct-2509
 dataset_repo: LEXam-Benchmark/LEXam
 subsets: 
   - mcq_4_choices
-  - mcq_8_choices
-  - mcq_16_choices
-  - mcq_32_choices
+  # - mcq_8_choices
+  # - mcq_16_choices
+  # - mcq_32_choices
 split: test
 
 # Regex to capture A, B, C... AA, AB...

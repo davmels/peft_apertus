@@ -10,7 +10,7 @@ set -euo pipefail
 
 IMAGE_NAME=vllm_apertus
 PROJECT_ROOT=$SCRATCH/LSAIE/project
-SQSH_PATH=${PROJECT_ROOT}/containers/vllm_uv.sqsh
+SQSH_PATH=${PROJECT_ROOT}/containers/vllm_apertus.sqsh
 
 mkdir -p ${PROJECT_ROOT}/containers
 mkdir -p logs
