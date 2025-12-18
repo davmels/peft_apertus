@@ -1,0 +1,19 @@
+image = "/iopsstor/scratch/cscs/aashirmatov/LSAIE/project/containers/vllm_apertus.sqsh"
+
+mounts = ["/iopsstor", "/users", "/capstor"]
+
+writable = true
+
+workdir = "/iopsstor/scratch/cscs/aashirmatov/LSAIE/project/peft_apertus"
+
+[annotations]
+com.hooks.aws_ofi_nccl.enabled = "true"
+com.hooks.aws_ofi_nccl.variant = "cuda12"
+
+[env]
+FI_CXI_DISABLE_HOST_REGISTER = "1"
+FI_MR_CACHE_MONITOR = "userfaultfd"
+NCCL_DEBUG = "INFO"
+HF_HOME = "/iopsstor/scratch/cscs/aashirmatov/huggingface/"
+VLLM_CACHE_DIR = "/iopsstor/scratch/cscs/aashirmatov/vllm_cache"
+TRITON_CACHE_DIR = "/iopsstor/scratch/cscs/aashirmatov/triton_cache"

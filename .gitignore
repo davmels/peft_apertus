@@ -10,3 +10,5 @@ __pycache__/
 wandb/
 results/
 logs_grid/
+/.venv/
+logs/
