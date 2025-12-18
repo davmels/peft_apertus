@@ -7,6 +7,8 @@ deepspeed_config:
   zero3_init_flag: true
   zero3_save_16bit_model: true
   zero_stage: 3
+  zero3_save_16bit_model: false
+  stage3_gather_16bit_weights_on_model_save: false
 distributed_type: DEEPSPEED
 downcast_bf16: 'no'
 main_training_function: main

@@ -3,9 +3,9 @@
 #SBATCH --job-name=sft-apertus
 #SBATCH -D .
 #SBATCH -A large-sc-2
-#SBATCH --output=./logs/O-%x.%j
-#SBATCH --error=./logs/E-%x.%j
-#SBATCH --nodes=4
+#SBATCH --output=./logs_new/O-%x.%j
+#SBATCH --error=./logs_new/E-%x.%j
+#SBATCH --nodes=2
 #SBATCH --ntasks-per-node=1
 #SBATCH --gres=gpu:4
 #SBATCH --cpus-per-task=288
@@ -25,12 +25,6 @@ export HF_HOME=$SCRATCH/huggingface
 export HF_TOKEN=$HF_TOKEN
 
 
-# pip install --user --upgrade pip
-# pip install --user git+https://github.com/huggingface/transformers.git 
-# unset SSL_CERT_FILE
-# pip install --user --upgrade --no-deps datasets
-
-
 export MASTER_ADDR=$(scontrol show hostnames $SLURM_JOB_NODELIST | head -n 1)
 export MASTER_PORT=29500
 export NUM_MACHINES=$SLURM_NNODES
@@ -39,7 +33,7 @@ export NUM_PROCESSES=$((SLURM_NNODES * GPUS_PER_NODE))
 
 export CONFIG_FILE="$SCRATCH/LSAIE/project/peft_apertus/configs/zero3_multinode.yaml"
 export PYTHON_FILE="$SCRATCH/LSAIE/project/peft_apertus/sft_train.py"
-export SFT_CONFIG="$SCRATCH/LSAIE/project/peft_apertus/configs/sft_full70.yaml"
+export SFT_CONFIG="$SCRATCH/LSAIE/project/peft_apertus/configs/sft_lora.yaml"
 
 echo "Master Node: $MASTER_ADDR"
 echo "Num Machines: $NUM_MACHINES"

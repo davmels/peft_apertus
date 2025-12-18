@@ -2,6 +2,7 @@ from datasets import load_dataset, load_from_disk
 from trl import ScriptArguments
 from dataclasses import dataclass, field
 import os
+import wandb
 
 
 @dataclass
@@ -13,7 +14,7 @@ class CustomScriptArguments(ScriptArguments):
     processing_strategy: str = field(
         default="default",
         metadata={
-            "help": "The name of the preprocessing strategy to apply (e.g., 'swiss_judgement_prediction')."
+            "help": "The name of the preprocessing strategy to apply (e.g., 'swiss_judgment_prediction')."
         },
     )
     from_disk: bool = field(
@@ -22,9 +23,13 @@ class CustomScriptArguments(ScriptArguments):
             "help": "Whether to load the dataset from disk (True) or from the hub (False)."
         },
     )
+    debug_mode: bool = field(
+        default=False,
+        metadata={"help": "Whether to run in debug mode with limited data."},
+    )
 
 
-def format_swiss_judgement(example):
+def format_swiss_judgment(example):
     """
     Converts raw rows (facts + label) into a single 'messages' column.
     """
@@ -92,7 +97,7 @@ def format_default(example):
 
 
 PROCESSING_STRATEGIES = {
-    "swiss_judgement_prediction": format_swiss_judgement,
+    "swiss_judgment_prediction": format_swiss_judgment,
     "default": format_default,
 }
 
@@ -129,7 +134,7 @@ def load_and_process_dataset(script_args):
         remove_cols = None
 
     # Apply the mapping
-    if strategy_name == "swiss_judgement_prediction":
+    if strategy_name == "swiss_judgment_prediction":
         # 1. Map to new format (creates "messages" column, removes "year", "text", etc.)
         dataset = dataset.map(
             process_fn,
@@ -165,5 +170,8 @@ def load_and_process_dataset(script_args):
             num_proc=os.cpu_count(),
             # load_from_cache_file=False
         )
+
+    print("Dataset processing complete.")
+    print(dataset)
 
     return dataset
