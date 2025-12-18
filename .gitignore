@@ -9,3 +9,5 @@ __pycache__/
 wandb/
 /.venv/
 logs/
+logs_grid/
+results/
