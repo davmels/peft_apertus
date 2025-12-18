@@ -5,8 +5,8 @@ dtype: bfloat16
 
 # Dataset
 dataset_name: /iopsstor/scratch/cscs/dmelikidze/LSAIE/project/peft_apertus/datasets/swiss_judgment_prediction_dataset #HuggingFaceH4/Multilingual-Thinking #/iopsstor/scratch/cscs/dmelikidze/LSAIE/project/peft_apertus/datasets/swiss_judgment_prediction_dataset
-dataset_num_proc: 288
-from_disk: true #false #true
+dataset_num_proc: 32
+from_disk: false #false #true
 processing_strategy: swiss_judgement_prediction # default #swiss_judgement_prediction
 
 # Hyperparameters
@@ -14,17 +14,18 @@ learning_rate: 2.0e-5
 gradient_checkpointing: true
 num_train_epochs: 1.0
 logging_steps: 1
-per_device_train_batch_size: 8
+per_device_train_batch_size: 4
 gradient_accumulation_steps: 4
 bf16: true 
 bf16_full_eval: true
 
 max_length: 4096
-warmup_ratio: 0.03
-lr_scheduler_type: cosine_with_min_lr
-lr_scheduler_kwargs:
-  min_lr_rate: 0.1
+warmup_ratio: 0.0
+lr_scheduler_type: constant
+# lr_scheduler_kwargs:
+#   min_lr_rate: 0.1
 
 output_dir: /iopsstor/scratch/cscs/dmelikidze/LSAIE/project/peft_apertus/models/apertus8B_sft_tests8
 report_to: "wandb"
 seed: 42
+save_steps: 100

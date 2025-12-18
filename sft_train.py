@@ -12,16 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-accelerate launch \
-    --config_file configs/zero3.yaml \
-    sft_train.py \
+""" 
+8B SFT LoRA
+accelerate launch --num_processes=4 \
+    --config_file configs/zero2_multinode.yaml sft_train.py \
     --config configs/sft_lora.yaml \
     --model_name_or_path swiss-ai/Apertus-8B-Instruct-2509 \
-    --processing_strategy swiss_judgement_prediction
+    --processing_strategy swiss_judgement_prediction \
+    --dataset_name rcds/swiss_judgment_prediction \
+    --dataset_config all \
+        
+70B SFT LoRA
+accelerate launch --num_processes=4     --config_file configs/zero3_multinode.yaml     sft_train.py     --config configs/sft_lora.yaml     --model_name_or_path swiss-ai/Apertus-70B-Instruct-2509     --processing_strategy swiss_judgement_prediction     --dataset_name rcds/swiss_judgment_prediction --debug_mode --output_dir /iopsstor/scratch/cscs/dmelikidze/LSAIE/project/peft_apertus/models/testest9 --dataset_config="all"
 """
 
-from datasets import load_dataset
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import os
 import transformers.modeling_utils
@@ -74,6 +78,15 @@ def main(script_args, training_args, model_args):
     ):
         dataset = load_and_process_dataset(script_args)
 
+    if script_args.debug_mode:
+        dataset[script_args.dataset_train_split] = dataset[
+            script_args.dataset_train_split
+        ].select(range(100))
+        if training_args.eval_strategy != "no":
+            dataset[script_args.dataset_test_split] = dataset[
+                script_args.dataset_test_split
+            ].select(range(100))
+
     # -------------
     # Train model
     # -------------
@@ -102,4 +115,5 @@ if __name__ == "__main__":
     script_args, training_args, model_args, _ = parser.parse_args_and_config(
         return_remaining_strings=True
     )
+    print("arguments: ", script_args, training_args, model_args)
     main(script_args, training_args, model_args)

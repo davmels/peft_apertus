@@ -1,5 +1,6 @@
 /Apertus-FT
 /logs
+logs/
 /.deepspeed_env
 *.logs
 models/
@@ -7,7 +8,7 @@ datasets/
 inference_results/
 __pycache__/
 wandb/
+results/
+logs_grid/
 /.venv/
 logs/
-logs_grid/
-results/
