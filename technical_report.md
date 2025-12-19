@@ -64,7 +64,7 @@ We next analyzed how LoRA rank interacts with learning rate during training. For
 ### Task Performance vs Rank
 
 ![Swiss Judgment Accuracy](report/plots/swiss_judgment_accuracy_vs_rank.png)
-*Figure 4: Swiss Judgment Prediction accuracy vs LoRA rank.*
+*Figure 4: Swiss Judgment Prediction accuracy vs LoRA rank. Baseline Apertus 8B model achieves 0.76 accuracy, while Apertus 70B achieves 0.55*
 
 We evaluated each fine-tuned model on the held-out test set for the Swiss Judgment Prediction task. Task accuracy increased with rank at lower values but plateaued beyond a certain point. Rank 64 emerged as a practical sweet spot: it achieved performance within 0.3–0.4% of the best results while providing substantially more adaptation capacity than minimal ranks (r=1, 2, 4, 8). This suggests that for this task, moderate ranks are sufficient to capture the necessary adaptations without incurring the computational overhead of higher ranks.
 
@@ -94,9 +94,8 @@ Based on our findings from 52 training runs, we recommend the following configur
 learning_rate: 1e-5              # Preserves general knowledge
 lora_r: 64                       # Near-optimal task performance
 lora_alpha: 32                   # Standard 2:1 ratio
-lora_target_modules: all-linear  # Attention + MLP layers
 batch_size: 64
-num_train_epochs: 1              # ~500 steps sufficient
+num_train_epochs: 1
 ```
 
 We chose LR=1e-5 because it preserves LEXam performance while still achieving reasonable task accuracy (79–80% on Swiss Judgment Prediction). Rank 64 provides a good balance: it achieves performance within 0.3–0.4% of the best results while offering sufficient capacity for adaptation. Targeting all linear modules (both attention and MLP layers) is critical, as attention-only LoRA significantly underperforms according to prior work.
