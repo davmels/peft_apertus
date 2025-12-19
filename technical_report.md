@@ -46,24 +46,24 @@ In this section, we present the key findings from our experiments. We conducted 
 
 ### Learning Rate and Training Loss
 
-![LR Sweep Combined](report/plots/figure2_style_combined.png)
+![LR Sweep Combined](./evals/report/plots/figure2_style_combined.png)
 *Figure 1: Final training loss vs learning rate for LoRA and full fine-tuning.*
 
 We first examined how learning rate affects final training loss for both LoRA and full fine-tuning. For the 8B model, LoRA achieved the lowest training loss at LR=1e-3, while full fine-tuning performed best at LR=1e-4. The 70B model showed a similar pattern: LoRA was optimal at LR=1e-3, whereas full fine-tuning required an even lower rate of LR=1e-5. Notably, full fine-tuning of the 70B model at LR=1e-4 exhibited training instability. These results indicate that LoRA consistently requires higher learning rates than full fine-tuning to achieve optimal training loss—a 10× difference for the 8B model and a 100× difference for the 70B model.
 
 ### Rank and Training Dynamics
 
-![Learning Curves 8B](report/plots/all_learning_curves_8B.png)
+![Learning Curves 8B](./evals/report/plots/all_learning_curves_8B.png)
 *Figure 2: 8B training dynamics across ranks and learning rates.*
 
-![Learning Curves 70B](report/plots/all_learning_curves_70B.png)
+![Learning Curves 70B](./evals/report/plots/all_learning_curves_70B.png)
 *Figure 3: 70B training dynamics. Rank=1 at LR=1e-3 diverged and is excluded from analysis.*
 
 We next analyzed how LoRA rank interacts with learning rate during training. For both model sizes, LR=1e-3 yielded the lowest training loss across all tested ranks. Interestingly, higher ranks (r≥32 for 8B, r≥64 for 70B) converged to nearly identical final loss values at this learning rate, suggesting diminishing returns beyond a certain rank threshold. Furthermore, the rank ordering by performance remained consistent across learning rates, indicating that hyperparameter search conducted at a single representative rank may generalize to other rank configurations.
 
 ### Task Performance vs Rank
 
-![Swiss Judgment Accuracy](report/plots/swiss_judgment_accuracy_vs_rank.png)
+![Swiss Judgment Accuracy](./evals/report/plots/swiss_judgment_accuracy_vs_rank.png)
 *Figure 4: Swiss Judgment Prediction accuracy vs LoRA rank. Baseline Apertus 8B model achieves 0.76 accuracy, while Apertus 70B achieves 0.55*
 
 We evaluated each fine-tuned model on the held-out test set for the Swiss Judgment Prediction task. Task accuracy increased with rank at lower values but plateaued beyond a certain point. Rank 64 emerged as a practical sweet spot: it achieved performance within 0.3–0.4% of the best results while providing substantially more adaptation capacity than minimal ranks (r=1, 2, 4, 8). This suggests that for this task, moderate ranks are sufficient to capture the necessary adaptations without incurring the computational overhead of higher ranks.
@@ -74,10 +74,10 @@ Comparing LoRA to full fine-tuning revealed an important distinction. For our ta
 
 ### Catastrophic Forgetting of Domain Knowledge
 
-![Investigation 8B](report/plots/alignment_investigation_8B.png)
+![Investigation 8B](./evals/report/plots/alignment_investigation_8B.png)
 *Figure 5: 8B model - Training loss vs LEXam knowledge retention across learning rates and ranks.*
 
-![Investigation 70B](report/plots/alignment_investigation_70B.png)
+![Investigation 70B](./evals/report/plots/alignment_investigation_70B.png)
 *Figure 6: 70B model - Higher learning rates induce knowledge collapse despite achieving lowest task loss.*
 
 Perhaps our most critical finding concerns the trade-off between task-specific optimization and general knowledge retention. We evaluated all fine-tuned models on the LEXam benchmark, which tests general legal knowledge through multiple-choice questions—a capability distinct from our binary classification training task.
