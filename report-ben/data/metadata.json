@@ -1,0 +1,33 @@
+{
+  "total_runs": 99,
+  "grid_runs": 63,
+  "lora_runs": 46,
+  "full_ft_runs": 17,
+  "states": {
+    "finished": 90,
+    "crashed": 6,
+    "running": 3
+  },
+  "learning_rates": [
+    1e-06,
+    1e-05,
+    0.0001,
+    0.001
+  ],
+  "lora_ranks": [
+    1,
+    2,
+    4,
+    8,
+    16,
+    32,
+    64,
+    128,
+    256,
+    512
+  ],
+  "model_sizes": [
+    "70B",
+    "8B"
+  ]
+}
