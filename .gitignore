@@ -13,3 +13,4 @@ logs_grid/
 /.venv/
 logs/
 containers/
+logs_new/

@@ -10,7 +10,7 @@ set -euo pipefail
 
 IMAGE_NAME=sft_apertus
 PROJECT_ROOT=$SCRATCH/LSAIE/project
-SQSH_PATH=${PROJECT_ROOT}/containers/sft_apertus3.sqsh
+SQSH_PATH=${PROJECT_ROOT}/containers/sft_apertus.sqsh
 
 mkdir -p ${PROJECT_ROOT}/containers
 mkdir -p logs
