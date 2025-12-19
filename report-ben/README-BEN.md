@@ -118,9 +118,9 @@ This project validates key findings from ["LoRA Without Regret"](https://thinkin
 
 ## LEXam Benchmark Evaluation
 
-**Critical Finding: Alignment Breaking at High Learning Rates**
+**Critical Finding: Knowledge Catastrophic Forgetting at High Learning Rates**
 
-Evaluation using lighteval framework (temperature=0, max_length=4096) on MCQ-4 (4-choice questions) from [LEXam Benchmark](https://github.com/LEXam-Benchmark/LEXam).
+Evaluation using lighteval framework (temperature=0, max_length=4096) on MCQ-4 (4-choice questions) from [LEXam Benchmark](https://github.com/LEXam-Benchmark/LEXam). LEXam tests legal knowledge across multiple domains, not just instruction-following.
 
 ### Baseline Performance (No Fine-Tuning)
 
@@ -143,18 +143,18 @@ Evaluation using lighteval framework (temperature=0, max_length=4096) on MCQ-4 (
 **Full FT at LR=1e-6 (Very Conservative):**
 - **8B Full FT**: 25.9% accuracy → **Maintains baseline** ✓
 
-### Analysis: The Training Loss vs. Alignment Trade-off
+### Analysis: The Training Loss vs. Knowledge Retention Trade-off
 
-![Alignment Trade-off](plots/alignment_tradeoff_8B.png)
-*Figure 5: Training loss vs. alignment trade-off for 8B model. Left: Lower LR achieves better training loss. Right: Same LR completely destroys instruction-following (LEXam accuracy drops from 27% to near 0%). The optimal training LR (1e-3) is catastrophic for general capabilities.*
+![Knowledge Retention Trade-off](plots/alignment_tradeoff_8B.png)
+*Figure 5: Training loss vs. knowledge retention trade-off for 8B model. Left: Lower LR achieves better training loss on Swiss Judgment task. Right: Same LR causes catastrophic forgetting of legal knowledge (LEXam accuracy drops from 27% to near 0%). The optimal training LR (1e-3) destroys general legal knowledge.*
 
-**Key Insight**: The learning rates that achieve optimal training loss (LR=1e-3) completely break instruction-following alignment. This reveals a critical trade-off:
+**Key Insight**: The learning rates that achieve optimal training loss (LR=1e-3) cause catastrophic forgetting of general legal knowledge. This reveals a critical trade-off:
 
 - **Low training loss ≠ Better model**
-- **Aggressive fine-tuning on domain data destroys general capabilities**
-- **Conservative LRs (1e-5, 1e-6) preserve alignment but sacrifice training performance**
+- **Aggressive fine-tuning on narrow domain data destroys broader knowledge**
+- **Conservative LRs (1e-5, 1e-6) preserve knowledge but sacrifice training performance**
 
-This finding contradicts the assumption that lower training loss indicates a better model. For practical deployment, **LR=1e-5 is the sweet spot** that balances Swiss legal task performance with maintained instruction-following.
+This finding contradicts the assumption that lower training loss indicates a better model. For practical deployment, **LR=1e-5 is the sweet spot** that balances Swiss legal task performance with maintained general legal knowledge.
 
 ---
 

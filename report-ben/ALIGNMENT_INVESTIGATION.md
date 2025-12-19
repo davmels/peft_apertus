@@ -1,7 +1,7 @@
-# Alignment Breaking Investigation
+# Knowledge Catastrophic Forgetting Investigation
 
 ## Question
-Is the catastrophic alignment breaking at LR=1e-3 real, or is it an artifact/error?
+Is the catastrophic forgetting of legal knowledge at LR=1e-3 real, or is it an artifact/error?
 
 ## Investigation Methods
 
@@ -44,23 +44,25 @@ Is the catastrophic alignment breaking at LR=1e-3 real, or is it an artifact/err
 
 **The result is REAL, not an artifact.**
 
-The learning rate that optimizes training loss on Swiss legal data (LR=1e-3) completely destroys the model's ability to follow instructions on general tasks. This is a critical finding about the trade-off between domain-specific optimization and general capabilities.
+The learning rate that optimizes training loss on Swiss Judgment Prediction (LR=1e-3) causes catastrophic forgetting of general legal knowledge. This is a critical finding about the trade-off between narrow task optimization and broader knowledge retention.
 
 ### Hypothesis
 
-At LR=1e-3, the model is overfitting so aggressively to the Swiss legal task that it:
-1. Loses its instruction-following capabilities
-2. Becomes unable to parse MCQ question formats
-3. May be outputting Swiss legal text regardless of input
+At LR=1e-3, the model is overfitting so aggressively to the Swiss Judgment task that it:
+1. Forgets general legal knowledge tested by LEXam
+2. Becomes unable to apply legal reasoning to other contexts
+3. May be memorizing Swiss-specific patterns at the expense of broader understanding
+
+**Note**: LEXam tests legal knowledge across multiple domains (MCQ questions), not instruction-following ability. The degradation represents **catastrophic forgetting** of legal knowledge, not alignment breaking.
 
 This suggests that **training loss is not a reliable metric** for model quality when fine-tuning on narrow domains.
 
 ### Practical Recommendation
 
 For Swiss legal fine-tuning:
-- **Use LR=1e-5** to maintain general capabilities
-- **Monitor held-out task performance**, not just training loss
-- **Consider multi-task training** to preserve general abilities
+- **Use LR=1e-5** to maintain general legal knowledge
+- **Monitor held-out knowledge benchmarks**, not just training loss
+- **Consider multi-task training** to preserve broader legal understanding
 
 ## Supporting Evidence
 
