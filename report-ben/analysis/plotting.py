@@ -821,8 +821,8 @@ class PlotGenerator:
             for _ in range(6):
                 legend_elements.append(Line2D([0], [0], color='none', label=''))
         
-        # Use 4 columns for 8B (3 LRs + Full FT), 2 for 70B
-        ncols = 4 if model_size == '8B' else 2
+        # Use 4 columns for both 8B and 70B (better organization by color/LR)
+        ncols = 4
         
         ax.legend(
             handles=legend_elements,
