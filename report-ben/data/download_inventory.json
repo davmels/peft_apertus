@@ -1,15 +1,15 @@
 {
-  "download_date": "2025-12-19 16:47:04",
+  "download_date": "2025-12-19 18:38:24",
   "grid_runs": {
     "total": 63,
-    "downloaded": 0,
-    "skipped": 63,
+    "downloaded": 52,
+    "skipped": 11,
     "failed": 0
   },
   "other_runs": {
     "total": 27,
-    "downloaded": 0,
-    "skipped": 27,
+    "downloaded": 27,
+    "skipped": 0,
     "failed": 0
   }
 }

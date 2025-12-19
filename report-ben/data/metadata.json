@@ -1,11 +1,12 @@
 {
-  "total_runs": 96,
+  "total_runs": 99,
   "grid_runs": 63,
   "lora_runs": 46,
   "full_ft_runs": 17,
   "states": {
     "finished": 90,
-    "crashed": 6
+    "crashed": 6,
+    "running": 3
   },
   "learning_rates": [
     1e-06,

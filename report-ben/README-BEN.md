@@ -15,7 +15,7 @@ We validate key findings from ["LoRA Without Regret"](https://thinkingmachines.a
 ## Finding 1: LoRA Requires 10-100× Higher Learning Rates
 
 ![LR Sweep Combined](plots/figure2_style_combined.png)
-*Figure 1: Learning rate sweep - 8B shows 10× ratio (LoRA 1e-3 vs Full FT 1e-4), 70B shows 100× ratio (LoRA 1e-3 vs Full FT 1e-5)*
+*Figure 1: Learning rate sweep - 8B shows 10× ratio (LoRA 1e-3 vs Full FT 1e-4), 70B shows 100× ratio (LoRA 1e-3 vs Full FT 1e-5). Note: 70B Full FT at LR=1e-4 shows training instability (loss=0.81 vs 0.67 at LR=1e-5).*
 
 **Validation**: ✅ Confirms blog's 10× ratio for 8B. 70B shows 100× ratio (model-dependent).
 
