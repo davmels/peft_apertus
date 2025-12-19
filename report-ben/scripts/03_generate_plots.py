@@ -283,7 +283,11 @@ def main():
     print("\n2-3. Training Dynamics")
     for model in ['8B', '70B']:
         print(f"Generating {model} learning curves... ", end='')
-        path = plotter.plot_all_learning_curves(model)
+        # Use paneled version for 70B (includes zoom window)
+        if model == '70B':
+            path = plotter.plot_all_learning_curves_paneled(model)
+        else:
+            path = plotter.plot_all_learning_curves(model)
         print(f"✓ {path.name}")
         generated_plots.append(path)
     
