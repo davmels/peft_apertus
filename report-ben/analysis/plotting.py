@@ -652,7 +652,7 @@ class PlotGenerator:
         
         # Representative ranks to show (avoid overcrowding)
         representative_ranks_8b = [1, 2, 4, 8, 16, 32, 64, 128, 256]
-        representative_ranks_70b = [1, 16, 64, 512]
+        representative_ranks_70b = [16, 64, 512]  # Exclude r=1 for 70B (unstable at LR=1e-3)
         
         rep_ranks = representative_ranks_8b if model_size == '8B' else representative_ranks_70b
         
@@ -784,7 +784,7 @@ class PlotGenerator:
         # Format axes
         ax.ticklabel_format(style='plain', axis='x')
         
-        # Custom legend by LR groups
+        # Custom legend by LR groups (same layout for both 8B and 70B)
         from matplotlib.lines import Line2D
         legend_elements = []
         
@@ -804,25 +804,17 @@ class PlotGenerator:
             # Add lines for this LR
             for line, label in handles_dict[lr_str]:
                 legend_elements.append(line)
-            
-            # Add padding to align columns (need 10 items per column for 4-column layout)
-            # Each LR has 1 header + 9 ranks = 10 items, perfect for 4 columns
         
-        # Add Full FT at the end with padding if needed
+        # Add Full FT at the end
         if 'Full FT' in handles_dict:
             legend_elements.append(
                 Line2D([0], [0], color='none', label='Full FT')
             )
             for line, label in handles_dict['Full FT']:
                 legend_elements.append(line)
-            
-            # Pad the Full FT column to match height (10 items per column)
-            # Full FT has 1 header + 3 LRs = 4 items, need 6 more blanks
-            for _ in range(6):
-                legend_elements.append(Line2D([0], [0], color='none', label=''))
         
-        # Use 4 columns for 8B (3 LRs + Full FT), 2 for 70B
-        ncols = 4 if model_size == '8B' else 2
+        # Use 4 columns for both 8B and 70B
+        ncols = 4
         
         ax.legend(
             handles=legend_elements,
