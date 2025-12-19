@@ -3,24 +3,29 @@
 #SBATCH --job-name=inf_grid
 #SBATCH -D .
 #SBATCH -A large-sc-2
-#SBATCH --output=logs/inf_grid_%x_%j.out
-#SBATCH --error=logs/inf_grid_%x_%j.err
+#SBATCH --output=logs/full/inf_grid_%x_%j.out
+#SBATCH --error=logs/full/inf_grid_%x_%j.err
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --gres=gpu:1          # 8B inference fits on 1 GPU easily
-#SBATCH --cpus-per-task=72    # Adjusted for 1 task
-#SBATCH --time=01:00:00
-#SBATCH --environment=lsaie3
+#SBATCH --gres=gpu:4          
+#SBATCH --cpus-per-task=288    
+#SBATCH --time=03:45:00
+#SBATCH --environment=lsaie_vllm
 
 # --- 1. Environment & Network Setup ---
-export NCCL_SOCKET_IFNAME=^lo,docker0
-export NCCL_DEBUG=INFO 
-export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+# export NCCL_SOCKET_IFNAME=^lo,docker0
+# export NCCL_DEBUG=INFO 
+# export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export NCCL_TIMEOUT=3600
 export TORCH_DISTRIBUTED_DEFAULT_TIMEOUT=3600
 
 export HF_HOME=$SCRATCH/huggingface
 export HF_TOKEN=$HF_TOKEN
+
+export VLLM_CACHE_ROOT="$SCRATCH/vllm_cache"
+export TRITON_CACHE_DIR="$SCRATCH/triton_cache"
+export TORCH_EXTENSIONS_DIR="$SCRATCH/torch_extensions"
+
 
 # --- 2. Argument Parsing ---
 # We use the arguments passed from the launcher script
@@ -52,15 +57,6 @@ echo "========================================"
 cd $SCRATCH/LSAIE/project/peft_apertus/
 
 srun bash -c '
-echo "Node $(hostname) - Starting Inference..."
-
-# Ensure environment dependencies
-pip install --upgrade pip
-pip install --upgrade git+https://github.com/huggingface/transformers.git 
-unset SSL_CERT_FILE
-pip install --upgrade --no-deps datasets
-
-# Run Python Script
 python "$PYTHON_SCRIPT" \
     --base_model_name_or_path="$BASE_MODEL" \
     --dataset_name="$DATASET_PATH" \
@@ -73,5 +69,6 @@ python "$PYTHON_SCRIPT" \
     --max_new_tokens=200 \
     --temperature=0.0 \
     --output_dir="$OUTPUT_DIR" \
-    --start_index=0
+    --start_index=0 \
+    --load_adapter_as_model
 '

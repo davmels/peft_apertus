@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Define directories
-GRID_ROOT="/iopsstor/scratch/cscs/dmelikidze/LSAIE/project/peft_apertus/results/grid_8B_lora"
-OUTPUT_ROOT="/iopsstor/scratch/cscs/dmelikidze/LSAIE/project/peft_apertus/evals/inference_results/grid_8B_lora"
-BASE_MODEL="swiss-ai/Apertus-8B-Instruct-2509"  # Ensure this is the correct 8B base model
+GRID_ROOT="/iopsstor/scratch/cscs/dmelikidze/LSAIE/project/peft_apertus/results/grid_70B_full_hf_models"
+OUTPUT_ROOT="/iopsstor/scratch/cscs/dmelikidze/LSAIE/project/peft_apertus/evals/inference_results/inference2/grid_70B_full"
+BASE_MODEL="swiss-ai/Apertus-70B-Instruct-2509"  # Ensure this is the correct 70B base model
 
 # Check if grid root exists
 if [ ! -d "$GRID_ROOT" ]; then
@@ -26,11 +26,11 @@ for model_path in "$GRID_ROOT"/*; do
         # Submit the SLURM job, passing arguments (LORA_PATH, OUTPUT_DIR, BASE_MODEL)
         # We use --job-name to make it easy to track specific runs in squeue
         sbatch --job-name="inf_${model_name}" \
-               inference_grid.sbatch \
+               inference_lora.sbatch \
                "$model_path" \
                "$save_path" \
                "$BASE_MODEL"
                
-        sleep 1 # Brief pause to prevent overloading the scheduler
+        sleep 0.2 # Brief pause to prevent overloading the scheduler
     fi
 done
