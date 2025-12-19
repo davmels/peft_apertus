@@ -652,7 +652,7 @@ class PlotGenerator:
         
         # Representative ranks to show (avoid overcrowding)
         representative_ranks_8b = [1, 2, 4, 8, 16, 32, 64, 128, 256]
-        representative_ranks_70b = [1, 16, 64, 512]
+        representative_ranks_70b = [16, 64, 512]  # Exclude r=1 for 70B (unstable at LR=1e-3)
         
         rep_ranks = representative_ranks_8b if model_size == '8B' else representative_ranks_70b
         
