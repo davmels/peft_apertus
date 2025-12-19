@@ -1,0 +1,19 @@
+image = "<SQSH_FILE_PATH>"
+
+# adjust as needed
+mounts = ["<mount1>", "<mount2>", "<mount3>"] 
+
+writable = true
+
+workdir = "<SCRATCH_DIRECTORY>/LSAIE/project/peft_apertus"
+
+[annotations]
+com.hooks.aws_ofi_nccl.enabled = "true"
+com.hooks.aws_ofi_nccl.variant = "cuda12"
+
+[env]
+FI_CXI_DISABLE_HOST_REGISTER = "1"
+FI_MR_CACHE_MONITOR = "userfaultfd"
+NCCL_DEBUG = "INFO"
+HF_HOME = "<SCRATCH_DIRECTORY>/huggingface/"
+VLLM_CACHE_DIR = <SCRATCH_DIRECTORY>/vllm_cache"
