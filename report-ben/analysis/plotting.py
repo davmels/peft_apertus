@@ -784,66 +784,37 @@ class PlotGenerator:
         # Format axes
         ax.ticklabel_format(style='plain', axis='x')
         
-        # Custom legend by LR groups
+        # Custom legend by LR groups (same layout for both 8B and 70B)
         from matplotlib.lines import Line2D
         legend_elements = []
         
-        if model_size == '70B':
-            # For 70B: Create 4 columns (3 LRs + Full FT) with 4 rows each (title + 3 ranks)
-            # Transpose the layout so each column is one LR group
-            lr_groups = []
+        # Add LoRA runs by LR (excluding 'Full FT' key)
+        for lr_str in sorted([k for k in handles_dict.keys() if k != 'Full FT'], reverse=True):
+            try:
+                lr_val = float(lr_str.replace('e-', 'e-'))
+                color_name = {1e-3: 'Blue', 1e-4: 'Red', 1e-5: 'Green'}.get(lr_val, 'Gray')
+            except:
+                continue
             
-            # Collect LR groups
-            for lr_str in sorted([k for k in handles_dict.keys() if k != 'Full FT'], reverse=True):
-                try:
-                    lr_val = float(lr_str.replace('e-', 'e-'))
-                    color_name = {1e-3: 'Blue', 1e-4: 'Red', 1e-5: 'Green'}.get(lr_val, 'Gray')
-                except:
-                    continue
-                
-                group = [Line2D([0], [0], color='none', label=f'LR={lr_str} ({color_name})')]
-                for line, label in handles_dict[lr_str]:
-                    group.append(line)
-                lr_groups.append(group)
+            # Add LR header
+            legend_elements.append(
+                Line2D([0], [0], color='none', label=f'LR={lr_str} ({color_name})')
+            )
             
-            # Add Full FT group
-            if 'Full FT' in handles_dict:
-                group = [Line2D([0], [0], color='none', label='Full FT')]
-                for line, label in handles_dict['Full FT']:
-                    group.append(line)
-                lr_groups.append(group)
-            
-            # Transpose: iterate by row, then by column
-            max_rows = max(len(g) for g in lr_groups)
-            for row in range(max_rows):
-                for group in lr_groups:
-                    if row < len(group):
-                        legend_elements.append(group[row])
-                    else:
-                        legend_elements.append(Line2D([0], [0], color='none', label=''))
-            
-            ncols = len(lr_groups)  # 4 columns
-        else:
-            # For 8B: Original layout
-            for lr_str in sorted([k for k in handles_dict.keys() if k != 'Full FT'], reverse=True):
-                try:
-                    lr_val = float(lr_str.replace('e-', 'e-'))
-                    color_name = {1e-3: 'Blue', 1e-4: 'Red', 1e-5: 'Green'}.get(lr_val, 'Gray')
-                except:
-                    continue
-                
-                legend_elements.append(Line2D([0], [0], color='none', label=f'LR={lr_str} ({color_name})'))
-                for line, label in handles_dict[lr_str]:
-                    legend_elements.append(line)
-            
-            if 'Full FT' in handles_dict:
-                legend_elements.append(Line2D([0], [0], color='none', label='Full FT'))
-                for line, label in handles_dict['Full FT']:
-                    legend_elements.append(line)
-                for _ in range(6):
-                    legend_elements.append(Line2D([0], [0], color='none', label=''))
-            
-            ncols = 4
+            # Add lines for this LR
+            for line, label in handles_dict[lr_str]:
+                legend_elements.append(line)
+        
+        # Add Full FT at the end
+        if 'Full FT' in handles_dict:
+            legend_elements.append(
+                Line2D([0], [0], color='none', label='Full FT')
+            )
+            for line, label in handles_dict['Full FT']:
+                legend_elements.append(line)
+        
+        # Use 4 columns for both 8B and 70B
+        ncols = 4
         
         ax.legend(
             handles=legend_elements,
