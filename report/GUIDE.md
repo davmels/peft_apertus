@@ -14,7 +14,7 @@ Professional analysis of LoRA hyperparameter experiments on Apertus 8B/70B model
 ## Quick Start
 
 ```bash
-cd /users/bbullinger/peft_apertus/report-ben
+cd /users/bbullinger/peft_apertus/report
 
 # Run the full analysis pipeline
 python scripts/01_fetch_wandb_data.py      # Fetch metadata from WandB
@@ -30,7 +30,7 @@ cat README-BEN.md
 ## Directory Structure
 
 ```
-report-ben/
+report/
 ├── analysis/              # Reusable Python package
 │   ├── config.py          # Configuration
 │   ├── data_loader.py     # Data loading utilities
@@ -138,7 +138,7 @@ python scripts/02_download_history.py --overwrite
 ### Import Errors
 ```bash
 # Ensure you're in the correct directory
-cd /users/bbullinger/peft_apertus/report-ben
+cd /users/bbullinger/peft_apertus/report
 python -c "from analysis import Config; print('✓ Works')"
 ```
 

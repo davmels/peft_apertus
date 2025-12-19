@@ -681,44 +681,66 @@ class PlotGenerator:
         # Format axes
         ax.ticklabel_format(style='plain', axis='x')
         
-        # Custom legend by LR groups (same layout for both 8B and 70B)
+        # Custom legend with proper padding to align colors in columns
+        # Structure: 4 columns, each with 1 header + N ranks (padded to max_ranks)
         from matplotlib.lines import Line2D
-        legend_elements = []
         
-        # Add LoRA runs by LR (excluding 'Full FT' key)
-        for lr_str in sorted([k for k in handles_dict.keys() if k != 'Full FT'], reverse=True):
-            try:
-                lr_val = float(lr_str.replace('e-', 'e-'))
-                color_name = {1e-3: 'Blue', 1e-4: 'Red', 1e-5: 'Green'}.get(lr_val, 'Gray')
-            except:
-                continue
-            
-            # Add LR header
-            legend_elements.append(
-                Line2D([0], [0], color='none', label=f'LR={lr_str} ({color_name})')
-            )
-            
-            # Add lines for this LR
-            for line, label in handles_dict[lr_str]:
-                legend_elements.append(line)
+        # Determine max ranks needed for padding
+        max_ranks = max(len(handles_dict.get(lr_str, [])) for lr_str in ['1e-3', '1e-4', '1e-5'])
         
-        # Add Full FT at the end
+        padded_handles = []
+        padded_labels = []
+        
+        color_names = {
+            '1e-3': 'Blue',
+            '1e-4': 'Red',
+            '1e-5': 'Green'
+        }
+        
+        # Build each LoRA LR column with padding
+        for lr_str in ['1e-3', '1e-4', '1e-5']:
+            if lr_str in handles_dict:
+                # Header
+                color_name = color_names.get(lr_str, '')
+                padded_handles.append(Line2D([0], [0], color='none'))
+                padded_labels.append(f'LR={lr_str} ({color_name})')
+                
+                # Ranks
+                num_ranks = 0
+                for line, label in handles_dict[lr_str]:
+                    padded_handles.append(line)
+                    padded_labels.append(label)
+                    num_ranks += 1
+                
+                # Pad to max_ranks
+                while num_ranks < max_ranks:
+                    padded_handles.append(Line2D([0], [0], color='none'))
+                    padded_labels.append('')
+                    num_ranks += 1
+        
+        # Full FT column
         if 'Full FT' in handles_dict:
-            legend_elements.append(
-                Line2D([0], [0], color='none', label='Full FT')
-            )
+            padded_handles.append(Line2D([0], [0], color='none'))
+            padded_labels.append('Full FT')
+            
             for line, label in handles_dict['Full FT']:
-                legend_elements.append(line)
-        
-        # Use 4 columns for both 8B and 70B
-        ncols = 4
+                padded_handles.append(line)
+                padded_labels.append(label)
+            
+            # Pad to match max_ranks
+            ft_count = len(handles_dict['Full FT'])
+            while ft_count < max_ranks:
+                padded_handles.append(Line2D([0], [0], color='none'))
+                padded_labels.append('')
+                ft_count += 1
         
         ax.legend(
-            handles=legend_elements,
+            handles=padded_handles,
+            labels=padded_labels,
             loc='upper right',
             framealpha=0.95,
             fontsize=8.5,
-            ncol=ncols,
+            ncol=4,
             columnspacing=0.7,
             handlelength=1.5
         )

@@ -11,7 +11,7 @@ class Config:
     """Configuration for LoRA hyperparameter analysis."""
     
     # Project paths
-    base_dir: Path = Path('/users/bbullinger/peft_apertus/report-ben')
+    base_dir: Path = Path('/users/bbullinger/peft_apertus/report')
     data_dir: Path = field(init=False)
     plots_dir: Path = field(init=False)
     history_dir: Path = field(init=False)
