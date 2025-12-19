@@ -4,8 +4,8 @@
   "lora_runs": 46,
   "full_ft_runs": 17,
   "states": {
-    "finished": 79,
-    "crashed": 17
+    "finished": 90,
+    "crashed": 6
   },
   "learning_rates": [
     1e-06,

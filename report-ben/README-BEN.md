@@ -118,21 +118,43 @@ This project validates key findings from ["LoRA Without Regret"](https://thinkin
 
 ## LEXam Benchmark Evaluation
 
-**Multiple Choice Questions (MCQ) - Legal Domain**
+**Critical Finding: Alignment Breaking at High Learning Rates**
 
-Evaluation using lighteval framework (temperature=0, max_length=4096) on 4 MCQ categories from [LEXam Benchmark](https://github.com/LEXam-Benchmark/LEXam).
+Evaluation using lighteval framework (temperature=0, max_length=4096) on MCQ-4 (4-choice questions) from [LEXam Benchmark](https://github.com/LEXam-Benchmark/LEXam).
 
-**Baseline Performance**: Apertus-8B-Instruct and Apertus-70B-Instruct evaluated without fine-tuning.
+### Baseline Performance (No Fine-Tuning)
 
-**Post-Fine-Tuning**: Both LoRA (rank=64, LR=1e-3) and Full FT configurations evaluated. Results show improvement over baseline on Swiss legal domain questions.
+- **Apertus-8B-Instruct**: 27.1% accuracy
+- **Apertus-70B-Instruct**: 33.1% accuracy
 
-### Alignment Issues
+### Post-Fine-Tuning Results
 
-**Observation**: Some fine-tuned models break instruction-following alignment on general tasks.
+**At LR=1e-3 (Optimal for Training Loss):**
+- **8B LoRA**: 0.0-4.3% accuracy → **SEVERE DEGRADATION** (24% absolute drop)
+- **70B LoRA**: 0.0% accuracy → **COMPLETE FAILURE** (33% absolute drop)
 
-**Hypothesis**: Aggressive fine-tuning on domain-specific data (Swiss legal cases) can degrade general instruction-following capabilities, especially at high learning rates or with full fine-tuning. This is a known trade-off in domain adaptation.
+**At LR=1e-4 (Moderate):**
+- **8B LoRA**: 7.7-16.2% accuracy → Still significant degradation
 
-**Examples**: [TBD - 2-3 examples of broken alignment]
+**At LR=1e-5 (Conservative):**
+- **8B LoRA**: 26.0-28.0% accuracy → **Maintains baseline** ✓
+- **70B LoRA**: 29.4-30.6% accuracy → Slight degradation
+
+**Full FT at LR=1e-6 (Very Conservative):**
+- **8B Full FT**: 25.9% accuracy → **Maintains baseline** ✓
+
+### Analysis: The Training Loss vs. Alignment Trade-off
+
+![Alignment Trade-off](plots/alignment_tradeoff_8B.png)
+*Figure 5: Training loss vs. alignment trade-off for 8B model. Left: Lower LR achieves better training loss. Right: Same LR completely destroys instruction-following (LEXam accuracy drops from 27% to near 0%). The optimal training LR (1e-3) is catastrophic for general capabilities.*
+
+**Key Insight**: The learning rates that achieve optimal training loss (LR=1e-3) completely break instruction-following alignment. This reveals a critical trade-off:
+
+- **Low training loss ≠ Better model**
+- **Aggressive fine-tuning on domain data destroys general capabilities**
+- **Conservative LRs (1e-5, 1e-6) preserve alignment but sacrifice training performance**
+
+This finding contradicts the assumption that lower training loss indicates a better model. For practical deployment, **LR=1e-5 is the sweet spot** that balances Swiss legal task performance with maintained instruction-following.
 
 ---
 
@@ -234,11 +256,12 @@ python scripts/03_generate_plots.py
 
 ## Key Takeaways
 
-1. 🔥 **Use LR=1e-3 for LoRA** (10-100× higher than Full FT)
+1. ⚠️ **CRITICAL**: LR=1e-3 (optimal for training loss) **destroys alignment** - use LR=1e-5 instead
 2. 🎯 **Rank 16-64 is optimal** for LoRA (diminishing returns beyond)
-3. ⚠️ **Full FT outperforms LoRA** by 6-14% in final loss
+3. 📉 **Full FT outperforms LoRA** by 6-14% in training loss
 4. 💡 **LoRA trade-off**: Use <1% parameters but sacrifice some performance
-5. 📈 **70B worth it** if you need best performance (~15% better than 8B)
-6. ⏱️ **~500 steps sufficient** (1 epoch on legal data)
-7. 🔧 **ZeRO-3 required for 70B** (ZeRO-0 works for 8B)
-8. 📊 **Multi-node scales linearly** (8B on ZeRO-0)
+5. 🔀 **Training loss ≠ Better model**: Lower training loss can mean worse general capabilities
+6. 📈 **70B worth it** if you need best performance (~15% better than 8B on training)
+7. ⏱️ **~500 steps sufficient** (1 epoch on legal data)
+8. 🔧 **ZeRO-3 required for 70B** (ZeRO-0 works for 8B)
+9. 📊 **Multi-node scales linearly** (8B on ZeRO-0)
